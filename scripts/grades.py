@@ -1,38 +1,43 @@
-"""
-Ask the user their name and their grades throughout the year (4 * 3 = 12 grades in total). 
-Show them their average and their status:
-    < 4: reproved
-    < 6: recovery
-    >= 6: approved
-"""
+from lib.input import ask_bool
+from lib.display import ordered_list
 
-name = input("Name: ")
 
-print("\nEnter your grades:")
+def bulletin(students: dict):
+    print("\n======== Boletim ========")
+    for name, grades in students.items():
+        print("\n" + name)
+        print("\n".join(grades))
+        print("Média:", sum(grades) / 4)
 
-averages = []
 
-for i in range(1, 5):
-    g1 = float(input(f"Test 1 ({i}): "))
-    g2 = float(input(f"Test 2 ({i}): "))
-    g3 = float(input(f"Project ({i}): "))
-    print()
+# Login teacher
+user = input("Usuário: ")
+password = input("Senha: ")
 
-    averages += (g1 + g2 + g3) / 3
+while password != "1234":
+    password = input("Senha incorreta. Tente novamente: ")
 
-average = sum(averages) / 4 # All grades have the same weight
+# Register grades
+students = {
+    input("\nNome do aluno: "): [float(input(f"Bimestre {i}: ")) for i in range(1, 5)]
+    for _ in range(10)
+}
 
-if average < 4:
-    status = "reproved"
-elif average < 6:
-    status = "recovery"
-else:
-    status = "approved"
+# Show grades
+bulletin(students)
 
-print("Bimonthly report", "-" * 10)
-print(f" {name} ".center(27, "#"))
-print("-" * 3, f"Test 1: {g1}")
-print("-" * 3, f"Test 2: {g2}")
-print("-" * 3, f"Group project: {g3}")
-print(f"\nAverage: {average:.2f}")
-print(f"Status: {status}")
+# Edit grades
+edit = ask_bool("\nGostaria de editar algo?")
+
+while edit:
+    pick = input("\nQual aluno? ")
+    print("\n".join(ordered_list(students[pick])))
+    bimester = int(input("Qual bimestre gostaria de editar? ")) - 1
+    students[pick][bimester] = float(input("Novo valor: "))
+
+    edit = ask_bool("\nGostaria de editar algo?")
+
+# Show grades (again)
+bulletin(students)
+
+print("\nThanks for using Cobra Manager :D 🐍")
